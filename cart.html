@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+    <!-- Add your custom CSS styles here -->
+    <style>
+        /* Add your custom styles here */
+        .cart-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #total-amount {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <a class="nav-link" href="categories.html">Book Categories</a>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Cart</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="payment.html">Payment</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="contact.html">Contact Us</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Content -->
+    <div class="container mt-4">
+        <h2>Your Shopping Cart</h2>
+        <div id="cart-items">
+            <!-- Cart items will be dynamically loaded here using JavaScript -->
+        </div>
+        <div class="mt-4">
+            <h4>Total Amount: $<span id="total-amount">0.00</span></h4>
+            <button class="btn btn-success" onclick="proceedToPayment()"><a href="payment.html"></a> Proceed to Payment</button>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and jQuery scripts -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UoMRL2BdUp8cCpbdEzjRqBpMC3mYlqc9cjL0De6JMUweweqpFs5KHT7M+kbJLbTF"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <!-- Link to the common JavaScript file for cart functionality -->
+    <script src="cart.js"></script>
+    <!-- Add your custom JavaScript for fetching cart items and calculating total amount here -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch cart items and populate the cart
+            fetchCartItems();
+        });
+
+        function fetchCartItems() {
+            // Fetch cart items from localStorage or server (use cart.js or any other method)
+            // For demonstration purposes, using an example array
+            const cartItems = [
+                {
+                    id: 1,
+                    title: 'To Kill a Mockingbird',
+                    price: 12.99,
+                    quantity: 2
+                },
+                {
+                    id: 2,
+                    title: 'The Great Gatsby',
+                    price: 11.50,
+                    quantity: 1
+                },
+                {
+                    id: 2,
+                    title: 'Moby-Dick',
+                    price: 13.25,
+                    quantity: 1
+                }
+
+                // Add more items as needed
+            ];
+
+            // Populate the cart items
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItems.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('cart-item');
+                cartItem.innerHTML = `
+                    <h4>${item.title}</h4>
+                    <p>Price: $${item.price}</p>
+                    <p>Quantity: ${item.quantity}</p>
+                    <button class="btn btn-danger" onclick="removeItem(${item.id})">Remove</button>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+
+            // Calculate and display the total amount
+            calculateTotalAmount(cartItems);
+        }
+
+        function removeItem(itemId) {
+            // Implement your logic to remove the item from the cart (use cart.js or any other method)
+            // For demonstration purposes, you can alert the user
+            alert(`Removed item with ID ${itemId} from the cart!`);
+        }
+
+        function calculateTotalAmount(cartItems) {
+            // Calculate the total amount based on cart items
+            const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+            // Display the total amount
+            const totalAmountSpan = document.getElementById('total-amount');
+            totalAmountSpan.textContent = totalAmount.toFixed(2);
+        }
+
+        function proceedToPayment() {
+            // Implement the logic to proceed to the payment page
+            // You can navigate to the payment.html page or perform any other action
+            alert('Proceeding to Payment');
+        }
+    </script>
+</body>
+</html>

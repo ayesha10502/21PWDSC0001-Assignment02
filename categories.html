@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Categories</title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add your custom styles here -->
+    <style>
+        /* Add your custom styles here */
+        body{
+            background-color: black;
+            color: whitesmoke;
+        }
+        .category-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .category-item {
+            display: inline-block;
+            margin-right: -2px;
+            cursor: pointer;
+        }
+
+        .book-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .book-item {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Online Library</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="cart.html">Cart</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="contact.html">Contact Us</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- Category List -->
+<div class="container mt-4">
+    <h2>Book Categories</h2>
+    <div class="btn-group" role="group" id="categoryButtons">
+        <!-- Category buttons will be dynamically added here using JavaScript -->
+    </div>
+    
+</div>
+
+<!-- Book List based on selected category -->
+<div class="container mt-4">
+    <h2>Books</h2>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search by title or author" id="searchInput">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="searchBooks()">Search</button>
+        </div>
+    </div>
+    <ul class="book-list" id="bookList">
+        <!-- Book details based on selected category will be dynamically added here using JavaScript -->
+    </ul>
+</div>
+
+<!-- Add Bootstrap and jQuery scripts -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+
+<!-- Add your custom JavaScript for fetching data and populating the page -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Fetch book categories and populate the page
+        fetchCategories();
+    });
+
+    function fetchCategories() {
+        // Fetch categories from books.json (assuming it's a valid JSON file)
+        fetch('books.json')
+            .then(response => response.json())
+            .then(data => {
+                const categories = [...new Set(data.map(book => book.category))];
+                const categoryButtons = document.getElementById('categoryButtons');
+
+                categories.forEach(category => {
+                    const button = document.createElement('button');
+                    button.classList.add('btn', 'btn-secondary', 'category-item'); // Added 'category-item' class
+                    button.innerText = category;
+                    button.onclick = () => {
+                        fetchBooksByCategory(category);
+                        updateActiveCategory(button);
+                    };
+
+                    categoryButtons.appendChild(button);
+                });
+
+                // Set the first category as active by default
+                const defaultCategoryButton = categoryButtons.querySelector('button');
+                defaultCategoryButton.classList.add('active');
+                fetchBooksByCategory(defaultCategoryButton.innerText);
+            })
+            .catch(error => console.error('Error fetching categories:', error));
+    }
+
+    function fetchBooksByCategory(category) {
+        // Fetch books based on the selected category
+        fetch('books.json')
+            .then(response => response.json())
+            .then(data => {
+                const bookList = document.getElementById('bookList');
+                const searchInput = document.getElementById('searchInput');
+                const searchTerm = searchInput.value.toLowerCase();
+
+                // Filter books based on category and search term
+                const filteredBooks = data.filter(book =>
+                    book.category === category &&
+                    (book.title.toLowerCase().includes(searchTerm) || book.author.toLowerCase().includes(searchTerm))
+                );
+
+                // Populate the book list
+                bookList.innerHTML = '';
+                filteredBooks.forEach(book => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('book-item');
+                    listItem.innerHTML = `
+                        <h4>${book.title}</h4>
+                        <p>Author: ${book.author}</p>
+                        <p>Category: ${book.category}</p>
+                        <p>Price: $${book.price}</p>
+                    `;
+                    bookList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching books:', error));
+    }
+
+    function searchBooks() {
+        // Trigger fetching books based on the selected category with the current search term
+        const selectedCategoryButton = document.querySelector('.btn.btn-secondary.active');
+        const selectedCategory = selectedCategoryButton.innerText;
+        fetchBooksByCategory(selectedCategory);
+    }
+
+    function updateActiveCategory(clickedButton) {
+        // Remove the 'active' class from all category buttons
+        const categoryButtons = document.querySelectorAll('.btn.btn-secondary.category-item');
+        categoryButtons.forEach(button => button.classList.remove('active'));
+
+        // Add the 'active' class to the clicked category button
+        clickedButton.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
